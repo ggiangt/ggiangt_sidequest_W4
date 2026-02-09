@@ -30,6 +30,9 @@ function setup() {
   // Create the player once (it will be respawned per level).
   player = new BlobPlayer();
 
+  // Add the generated level from tile map to the levels array
+  data.levels.push(buildGeneratedLevel());
+
   // Load the first level.
   loadLevel(0);
 
@@ -47,10 +50,32 @@ function draw() {
   player.update(world.platforms);
   player.draw(world.theme.blob);
 
-  // 3) HUD
+  // 3) Check if player reached the goal
+  if (playerReachedGoal()) {
+    loadNextLevel();
+  }
+
+  // 4) HUD
   fill(0);
   text(world.name, 10, 18);
-  text("Move: A/D or ←/→ • Jump: Space/W/↑ • Next: N", 10, 36);
+  text("Move: A/D or ←/→ • Jump: Space/W/↑", 10, 36);
+}
+
+// Check if player overlaps the goal zone
+function playerReachedGoal() {
+  const g = world.goal;
+  const px = player.x - player.r;
+  const py = player.y - player.r;
+  const pw = player.r * 2;
+  const ph = player.r * 2;
+
+  return px < g.x + g.w && px + pw > g.x && py < g.y + g.h && py + ph > g.y;
+}
+
+// Load next level (loops back to first)
+function loadNextLevel() {
+  const next = (levelIndex + 1) % data.levels.length;
+  loadLevel(next);
 }
 
 function keyPressed() {

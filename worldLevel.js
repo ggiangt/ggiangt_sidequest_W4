@@ -50,6 +50,12 @@ class WorldLevel {
 
     // Convert raw platform objects into Platform instances.
     this.platforms = (levelJson.platforms || []).map((p) => new Platform(p));
+
+    // Convert obstacle objects into Platform instances (for collision + drawing).
+    this.obstacles = (levelJson.obstacles || []).map((o) => new Platform(o));
+
+    // Goal zone (finish area).
+    this.goal = levelJson.goal || { x: 580, y: 100, w: 50, h: 50 };
   }
 
   /*
@@ -75,5 +81,12 @@ class WorldLevel {
     for (const p of this.platforms) {
       p.draw(color(this.theme.platform));
     }
+    // Draw obstacles in red
+    for (const o of this.obstacles) {
+      o.draw(color("#E74C3C"));
+    }
+    // Draw goal zone in gold
+    fill(color("#FFD700"));
+    rect(this.goal.x, this.goal.y, this.goal.w, this.goal.h);
   }
 }
